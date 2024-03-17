@@ -1,8 +1,10 @@
 import java.sql.*;
-
+import java.util.Scanner;
 //TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
 // click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
 public class Main {
+    //user = postgres
+    //password = passwrd
     static String url = "jdbc:postgresql://localhost:5432/Students";
     static String user = "postgres";
     static String password = "passwrd";
@@ -114,43 +116,86 @@ public class Main {
         }
     }
 
+    public static int prompt(){
+        Scanner in = new Scanner(System.in);
+        System.out.println("------------------------------------------------");
+        System.out.println("input 1: to see the database \ninput 2: to add a student to the database \ninput 3: to update a students email \ninput 4: to delete a student \ninput 0: to exit");
+        System.out.println("------------------------------------------------");
+        int c = in.nextInt();
+        if(c < 0 || c > 4){
+            System.out.println("Error: Not a valid input");
+            return -1;
+        }
+        return c;
+
+    }
+
     public static void main(String[] args) {
-
-        /*
-
-        String url = "jdbc:postgresql://localhost:5432/Students";
-        String user = "postgres";
-        String password = "passwrd";
-
-        try {
+        Scanner scan = new Scanner(System.in);
+        System.out.println("enter your username and password for your postgres account with localhost:5432 and Database Students");
+        System.out.println("username: ");
+        user = scan.next();
+        System.out.println("password: ");
+        password = scan.next();
+        try{
             Class.forName("org.postgresql.Driver");
             Connection conn = DriverManager.getConnection(url, user, password);
-            Statement statement = conn.createStatement();
-            statement.executeQuery("SELECT * FROM students");
-            ResultSet set = statement.getResultSet();
-            while(set.next()){
-                System.out.println(set.getString("first_name"));
-            }
+            Statement stmt = conn.createStatement();
+            String startQuery = "drop table if exists students;\n" +
+                    "\n" +
+                    "CREATE TABLE students (\n" +
+                    "\tstudent_id Serial Primary Key,\n" +
+                    "\tfirst_name Text Not Null,\n" +
+                    "\tlast_name Text Not Null,\n" +
+                    "\temail Text Not Null Unique,\n" +
+                    "\tenrollment_date Date\n" +
+                    ");\n" +
+                    "\n" +
+                    "INSERT INTO students (first_name, last_name, email, enrollment_date) VALUES\n" +
+                    "('John', 'Doe', 'john.doe@example.com', '2023-09-01'),\n" +
+                    "('Jane', 'Smith', 'jane.smith@example.com', '2023-09-01'),\n" +
+                    "('Jim', 'Beam', 'jim.beam@example.com', '2023-09-02');";
+            stmt.executeUpdate(startQuery);
 
-            if(conn != null){
-                System.out.println("Connected to Database!");
-            }
-            else{
-                System.out.println("did not connect :(");
-            }
-
-        }
-        catch (Exception e){
+        }catch (Exception e){
             System.out.println(e);
+
         }
 
-         */
-        long millis=System.currentTimeMillis();
-        Date d =new Date(millis);
-
-        System.out.println(getAllStudents());
-        //System.out.println(deleteStudent(2));
-        //System.out.println(addStudent("Squid", "Ward", "GrumpySquid420@gmail.com", d));
+        int c = prompt();
+        while(c != 0){
+            //see database
+            if(c == 1){
+                System.out.println("Here is the database: \n" + getAllStudents());
+            }
+            //add student
+            else if(c == 2){
+                System.out.println("First name: ");
+                String first = scan.next();
+                System.out.println("Last name: ");
+                String last = scan.next();
+                System.out.println("Student Email: ");
+                String email = scan.next();
+                long millis=System.currentTimeMillis();
+                Date d =new Date(millis);
+                System.out.println(addStudent(first, last, email, d));
+            }
+            //update email
+            else if(c == 3){
+                System.out.println("Student ID: ");
+                int id = scan.nextInt();
+                System.out.println("Updated Email: ");
+                String email = scan.next();
+                System.out.println(updateStudentEmail(id, email));
+            }
+            //delete student
+            else if(c == 4){
+                System.out.println("Sudent ID: ");
+                int id = scan.nextInt();
+                System.out.println(deleteStudent(id));
+            }
+            c = prompt();
+        }
 
     }
 }
