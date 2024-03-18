@@ -1,24 +1,24 @@
 import java.sql.*;
 import java.util.Scanner;
-//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
-// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
+
 public class Main {
-    //user = postgres
-    //password = passwrd
     static String url = "jdbc:postgresql://localhost:5432/Students";
-    static String user = "postgres";
-    static String password = "passwrd";
+    static String user;
+    static String password;
 
     public static String getAllStudents(){
 
         StringBuilder str = new StringBuilder();
 
         try {
+
             Class.forName("org.postgresql.Driver");
             Connection conn = DriverManager.getConnection(url, user, password);
             Statement statement = conn.createStatement();
             statement.executeQuery("SELECT * FROM students");
+
             ResultSet set = statement.getResultSet();
+
             while (set.next()) {
                 int id = set.getInt("student_id");
                 String first_name = set.getString("first_name");
@@ -157,10 +157,12 @@ public class Main {
                     "('Jim', 'Beam', 'jim.beam@example.com', '2023-09-02');";
             stmt.executeUpdate(startQuery);
 
+
         }catch (Exception e){
             System.out.println(e);
-
+            return;
         }
+
 
         int c = prompt();
         while(c != 0){
