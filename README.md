@@ -9,3 +9,5 @@ javac Main.java
 java Main.java 
 
 Follow command prompts
+
+video link: https://youtu.be/tXUEMUUQT9g
